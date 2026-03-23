@@ -1,4 +1,4 @@
-package com.MiniProject.eventregisteration.demo;
+package com.MiniProject.eventregisteration;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

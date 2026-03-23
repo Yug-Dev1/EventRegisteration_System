@@ -1,4 +1,4 @@
-package com.MiniProject.eventregisteration.demo;
+package com.MiniProject.eventregisteration;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
