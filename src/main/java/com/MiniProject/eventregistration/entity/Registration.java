@@ -1,8 +1,5 @@
-package com.MiniProject.eventregisteration.entity;
+package com.MiniProject.eventregistration.entity;
 
-import com.MiniProject.eventregisteration.entity.Event;
-import com.MiniProject.eventregisteration.entity.RegistrationStatus;
-import com.MiniProject.eventregisteration.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 

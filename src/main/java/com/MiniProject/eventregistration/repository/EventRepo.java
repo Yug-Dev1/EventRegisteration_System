@@ -1,6 +1,6 @@
-package com.MiniProject.eventregisteration.repository;
+package com.MiniProject.eventregistration.repository;
 
-import com.MiniProject.eventregisteration.entity.Event;
+import com.MiniProject.eventregistration.entity.Event;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface EventRepo extends JpaRepository<Event,Long> {

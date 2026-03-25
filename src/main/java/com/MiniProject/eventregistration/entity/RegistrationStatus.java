@@ -1,4 +1,4 @@
-package com.MiniProject.eventregisteration.entity;
+package com.MiniProject.eventregistration.entity;
 
 public enum RegistrationStatus {
     ACTIVE,

@@ -1,4 +1,4 @@
-package com.MiniProject.eventregisteration.repository;
+package com.MiniProject.eventregistration.repository;
 
 import jakarta.servlet.Registration;
 import org.springframework.data.jpa.repository.JpaRepository;

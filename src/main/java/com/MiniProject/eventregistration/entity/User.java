@@ -1,4 +1,4 @@
-package com.MiniProject.eventregisteration.entity;
+package com.MiniProject.eventregistration.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
