@@ -1,5 +1,6 @@
 package com.MiniProject.eventregistration.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,5 +27,6 @@ public class Event {
     private int maxAge;
 
     private int maxSeats;
-    private int availableSeats;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private Integer availableSeats;
 }

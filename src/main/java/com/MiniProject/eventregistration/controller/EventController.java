@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/Events")
+@RequestMapping("/events")
 public class EventController {
 
     private final EventService eventService;
@@ -17,7 +17,8 @@ public class EventController {
     }
 
     @PostMapping
-    public Event createEvent(Event event){
+    public Event createEvent(@RequestBody Event event){
+        event.setAvailableSeats(event.getMaxSeats());
         return eventService.createEvent(event);
     }
 
