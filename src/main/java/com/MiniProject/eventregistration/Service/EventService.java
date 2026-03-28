@@ -1,5 +1,6 @@
 package com.MiniProject.eventregistration.Service;
 
+import com.MiniProject.eventregistration.DTOs.EventResponseDTO;
 import com.MiniProject.eventregistration.entity.Event;
 import com.MiniProject.eventregistration.exception.ResourceNotFound;
 import com.MiniProject.eventregistration.repository.EventRepo;
@@ -28,8 +29,17 @@ public class EventService {
         return eventRepo.save(event);
     }
 
-    public Event getEvent(Long id){
-        return eventRepo.findById(id).orElseThrow(()->new ResourceNotFound("Event not found"));
+    public EventResponseDTO getEvent(Long id) {
+        Event event = eventRepo.findById(id)
+                .orElseThrow(() -> new ResourceNotFound("Event not found"));
+
+        return new EventResponseDTO(
+                event.getId(),
+                event.getTitle(),
+                event.getLocation(),
+                event.getDate(),
+                event.getAvailableSeats()
+        );
     }
 
     public List<Event> getAllEvents(){

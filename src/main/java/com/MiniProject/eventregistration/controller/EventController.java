@@ -1,5 +1,6 @@
 package com.MiniProject.eventregistration.controller;
 
+import com.MiniProject.eventregistration.DTOs.EventResponseDTO;
 import com.MiniProject.eventregistration.Service.EventService;
 import com.MiniProject.eventregistration.entity.Event;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +29,7 @@ public class EventController {
     }
 
     @GetMapping("/{id}")
-    public Event getEvent(@PathVariable Long id){
+    public EventResponseDTO getEvent(@PathVariable Long id){
         return eventService.getEvent(id);
     }
 }
