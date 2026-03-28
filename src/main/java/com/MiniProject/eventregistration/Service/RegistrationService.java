@@ -1,6 +1,7 @@
 package com.MiniProject.eventregistration.Service;
 
 import com.MiniProject.eventregistration.entity.*;
+import com.MiniProject.eventregistration.exception.ResourceNotFound;
 import com.MiniProject.eventregistration.repository.*;
 import org.springframework.stereotype.Service;
 
@@ -23,29 +24,29 @@ public class RegistrationService {
     public Registration registerUser(Long userId, Long eventId) {
 
         User user = userRepo.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFound("User not found"));
 
         Event event = eventRepo.findById(eventId)
-                .orElseThrow(() -> new RuntimeException("Event not found"));
+                .orElseThrow(() ->new ResourceNotFound("Event not found"));
 
         // 1. Event already happened
         if (event.getDate().isBefore(LocalDate.now())) {
-            throw new RuntimeException("Event already happened");
+            throw new ResourceNotFound("Event Already happened ");
         }
 
         // 2. Seats check
         if (event.getAvailableSeats() <= 0) {
-            throw new RuntimeException("No seats available");
+            throw new ResourceNotFound("No Seats Available");
         }
 
         // 3. Age validation
         if (user.getAge() < event.getMinAge() || user.getAge() > event.getMaxAge()) {
-            throw new RuntimeException("Age limit violation");
+            throw new ResourceNotFound("Age Limit Violation");
         }
 
         // 4. Duplicate check
         if (registerRepo.existsByUserAndEvent(user, event)) {
-            throw new RuntimeException("User already registered");
+            throw new ResourceNotFound("User Already Registered");
         }
 
         // 5. Create registration

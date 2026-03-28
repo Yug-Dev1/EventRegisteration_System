@@ -1,9 +1,12 @@
 package com.MiniProject.eventregistration.Service;
 
 import com.MiniProject.eventregistration.entity.User;
+import com.MiniProject.eventregistration.exception.ResourceNotFound;
 import com.MiniProject.eventregistration.repository.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service // makes SpringBean
 public class service {
@@ -15,7 +18,10 @@ public class service {
     }
 
     public User getUser(Long id){
-        return userRepo.findById(id).orElseThrow(()->new RuntimeException("User Not Found"));
+        return userRepo.findById(id).orElseThrow(()->new ResourceNotFound("User not found"));
     }
 
+    public List<User> getAllUsers() {
+        return userRepo.findAll();
+    }
 }

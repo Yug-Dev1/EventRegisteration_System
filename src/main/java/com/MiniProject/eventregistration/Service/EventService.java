@@ -1,6 +1,7 @@
 package com.MiniProject.eventregistration.Service;
 
 import com.MiniProject.eventregistration.entity.Event;
+import com.MiniProject.eventregistration.exception.ResourceNotFound;
 import com.MiniProject.eventregistration.repository.EventRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,7 +29,7 @@ public class EventService {
     }
 
     public Event getEvent(Long id){
-        return eventRepo.findById(id).orElseThrow(()->new RuntimeException("Event Not found"));
+        return eventRepo.findById(id).orElseThrow(()->new ResourceNotFound("Event not found"));
     }
 
     public List<Event> getAllEvents(){
