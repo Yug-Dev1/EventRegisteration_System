@@ -139,16 +139,3 @@ Built as a backend learning project to demonstrate real-world API development us
 2. Configure MySQL in application.properties
 3. Run application
 4. Use Postman to test APIs
-
----
-
-## Sample Flow
-User → Event → Registration → Seat Update
-
----
-
-## Future Improvements
-- JWT Authentication
-- DTO Layer
-- Global Exception Handling
-- Pagination
