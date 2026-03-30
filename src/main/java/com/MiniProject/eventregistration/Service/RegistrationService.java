@@ -62,4 +62,18 @@ public class RegistrationService {
         // 7. Save
         return registerRepo.save(registration);
     }
+
+    public void cancelRegistration(Long userID,Long eventID){
+        User user=userRepo.findById(userID).orElseThrow(()->new ResourceNotFound("user doesn't EXIST"));
+        Event event= eventRepo.findById(eventID).orElseThrow(()-> new ResourceNotFound("event doesn't EXIST"));
+        Registration registration = registerRepo.findByUserAndEvent(user, event)
+                .orElseThrow(() -> new ResourceNotFound("Registration not found"));
+
+        if(registration.getStatus()==RegistrationStatus.CANCELLED){
+            throw new RuntimeException("Already CANCELLED");
+        }
+        registration.setStatus(RegistrationStatus.CANCELLED);
+       event.setAvailableSeats(event.getAvailableSeats()+1);
+       registerRepo.save(registration);
+    }
 }

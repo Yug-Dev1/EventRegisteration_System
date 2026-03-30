@@ -1,7 +1,9 @@
 package com.MiniProject.eventregistration.controller;
 
+import com.MiniProject.eventregistration.DTOs.UserResponseDTO;
 import com.MiniProject.eventregistration.Service.service;
 import com.MiniProject.eventregistration.entity.User;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,12 +19,12 @@ public class UserController {
     }
 
     @PostMapping
-    public User createUser(@RequestBody User user){
+    public User createUser(@Valid @RequestBody User user){
         return userService.createUser(user);
     }
 
     @GetMapping("/{id}")
-    public User getUser(@PathVariable Long id){
+    public UserResponseDTO getUser(@PathVariable Long id){
         return userService.getUser(id);
     }
 

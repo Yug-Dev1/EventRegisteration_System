@@ -3,6 +3,7 @@ package com.MiniProject.eventregistration.controller;
 import com.MiniProject.eventregistration.DTOs.EventResponseDTO;
 import com.MiniProject.eventregistration.Service.EventService;
 import com.MiniProject.eventregistration.entity.Event;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,7 +19,7 @@ public class EventController {
     }
 
     @PostMapping
-    public Event createEvent(@RequestBody Event event){
+    public Event createEvent(@Valid @RequestBody Event event){
         event.setAvailableSeats(event.getMaxSeats());
         return eventService.createEvent(event);
     }

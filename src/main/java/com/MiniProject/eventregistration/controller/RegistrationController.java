@@ -21,4 +21,13 @@ public class RegistrationController {
     ) {
         return registrationService.registerUser(userId, eventId);
     }
+
+    @DeleteMapping
+    public String cancelRegistration(
+            @RequestParam Long userId,
+            @RequestParam Long eventId
+    ) {
+        registrationService.cancelRegistration(userId, eventId);
+        return "Registration cancelled successfully";
+    }
 }

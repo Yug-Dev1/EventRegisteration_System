@@ -29,4 +29,5 @@ public class Registration {
 
     @Enumerated(EnumType.STRING)
     private RegistrationStatus status;
+
 }
