@@ -1,5 +1,6 @@
 package com.MiniProject.eventregistration.controller;
 
+import com.MiniProject.eventregistration.DTOs.RegisterRequestDTO;
 import com.MiniProject.eventregistration.DTOs.UserResponseDTO;
 import com.MiniProject.eventregistration.Service.service;
 import com.MiniProject.eventregistration.entity.User;
@@ -32,4 +33,10 @@ public class UserController {
     public List<User> getAllUser(){
         return userService.getAllUsers();
     }
+
+    @PostMapping("/auth/register")
+    public UserResponseDTO register(@RequestBody RegisterRequestDTO dto) {
+        return userService.register(dto);
+    }
+
 }
