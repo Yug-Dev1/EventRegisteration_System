@@ -1,10 +1,12 @@
 package com.MiniProject.eventregistration.controller;
 
-import com.MiniProject.eventregistration.DTOs.RegisterRequestDTO;
-import com.MiniProject.eventregistration.DTOs.UserResponseDTO;
 import com.MiniProject.eventregistration.Service.service;
 import com.MiniProject.eventregistration.entity.User;
 import jakarta.validation.Valid;
+import org.springframework.security.core.Authentication;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,24 +21,9 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping
-    public User createUser(@Valid @RequestBody User user){
-        return userService.createUser(user);
-    }
-
-    @GetMapping("/{id}")
-    public UserResponseDTO getUser(@PathVariable Long id){
-        return userService.getUser(id);
-    }
-
     @GetMapping
     public List<User> getAllUser(){
         return userService.getAllUsers();
     }
-
-    @PostMapping("/auth/register")
-    public UserResponseDTO register(@RequestBody RegisterRequestDTO dto) {
-        return userService.register(dto);
-    }
-
 }
+

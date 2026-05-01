@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
@@ -36,4 +37,6 @@ public class User {
     @Enumerated(EnumType.STRING)
     //without this is would store like 0,1,2
     private List<Role> roles;
+
+
 }

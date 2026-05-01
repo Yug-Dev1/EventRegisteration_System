@@ -32,7 +32,6 @@ public class EventService {
     public EventResponseDTO getEvent(Long id) {
         Event event = eventRepo.findById(id)
                 .orElseThrow(() -> new ResourceNotFound("Event not found"));
-
         return new EventResponseDTO(
                 event.getId(),
                 event.getTitle(),
