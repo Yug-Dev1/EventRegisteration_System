@@ -1,6 +1,5 @@
-package com.MiniProject.eventregistration.entity;
+package com.MiniProject.eventregistration.DTOs;
 
-import jakarta.persistence.Entity;
 import lombok.*;
 
 

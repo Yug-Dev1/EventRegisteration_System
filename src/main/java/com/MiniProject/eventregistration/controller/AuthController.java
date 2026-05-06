@@ -4,7 +4,7 @@ import com.MiniProject.eventregistration.DTOs.RegisterRequestDTO;
 import com.MiniProject.eventregistration.DTOs.UserResponseDTO;
 import com.MiniProject.eventregistration.Service.JwtService;
 import com.MiniProject.eventregistration.Service.service;
-import com.MiniProject.eventregistration.entity.LoginDTO;
+import com.MiniProject.eventregistration.DTOs.LoginDTO;
 import com.MiniProject.eventregistration.entity.User;
 
 import org.springframework.beans.factory.annotation.Autowired;

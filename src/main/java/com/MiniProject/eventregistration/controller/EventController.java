@@ -20,7 +20,6 @@ public class EventController {
 
     @PostMapping
     public Event createEvent(@Valid @RequestBody Event event){
-        event.setAvailableSeats(event.getMaxSeats());
         return eventService.createEvent(event);
     }
 
