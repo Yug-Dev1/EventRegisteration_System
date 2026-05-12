@@ -22,13 +22,6 @@ public class service {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public User createUser(User user) {
-
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-
-        return userRepo.save(user);
-    }
-
     public UserResponseDTO getUser(Long id) {
 
         User user = userRepo.findById(id)
