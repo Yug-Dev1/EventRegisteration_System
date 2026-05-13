@@ -8,5 +8,5 @@ import java.util.Optional;
 public interface EventPageConfigRepository
         extends MongoRepository<EventPageConfig, String> {
     Optional<EventPageConfig> findByEventId(Long eventId);
-
+    boolean existsByEventId(Long eventId);
 }

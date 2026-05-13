@@ -1,54 +1,142 @@
 package com.MiniProject.eventregistration.mongo.document;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.List;
+import java.util.Map;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Document(collection = "event_page_config")
 public class EventPageConfig {
 
     @Id
     private String id;
 
+    // Links Mongo config to MySQL Event
     private Long eventId;
 
-    private String theme;
+    // MOVIE, MARATHON, PARTY, WORKSHOP, CONCERT, FESTIVAL, SPORTS, TECH_EVENT
+    private String eventType;
 
-    private Boolean published;
+    private MediaConfig media;
 
-    public EventPageConfig() {
+    private ThemeConfig theme;
+
+    private List<ScheduleItem> schedule;
+
+    private List<Participant> participants;
+
+    private List<FaqItem> faq;
+
+    private List<TicketTier> ticketTiers;
+
+    // Event-specific metadata
+    // Example:
+    // MOVIE -> duration, genre, language
+    // MARATHON -> distance, hydrationPoints
+    // PARTY -> dressCode, djLineup
+    private Map<String, Object> customAttributes;
+
+    // Defines extra registration fields for THIS event
+    // Actual user answers go in Registration table
+    private List<FormField> customFormFields;
+
+
+    // ---------------- MEDIA ----------------
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class MediaConfig {
+        private String bannerImageUrl;
+        private String thumbnailUrl;
+        private List<String> galleryImages;
+        private String promoVideoUrl;
     }
 
-    public EventPageConfig(Long eventId, String theme, Boolean published) {
-        this.eventId = eventId;
-        this.theme = theme;
-        this.published = published;
+
+    // ---------------- THEME ----------------
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class ThemeConfig {
+        private String primaryColor;
+        private String secondaryColor;
+        private String fontFamily;
+        private String backgroundStyle;
+        private String buttonStyle;
     }
 
-    public String getId() {
-        return id;
+
+    // ---------------- SCHEDULE ----------------
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class ScheduleItem {
+        private String time;
+        private String title;
+        private String description;
     }
 
-    public Long getEventId() {
-        return eventId;
+
+    // ---------------- PARTICIPANTS ----------------
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class Participant {
+        private String name;
+        private String role;       // Speaker, Actor, DJ, Host, Trainer
+        private String imageUrl;
+        private String bio;
+        private Map<String, String> socialLinks;
     }
 
-    public void setEventId(Long eventId) {
-        this.eventId = eventId;
+
+    // ---------------- FAQ ----------------
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class FaqItem {
+        private String question;
+        private String answer;
     }
 
-    public String getTheme() {
-        return theme;
+
+    // ---------------- TICKETS ----------------
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class TicketTier {
+        private String name;           // VIP, Gold, General
+        private Double price;
+        private Integer quantity;
+        private List<String> benefits;
     }
 
-    public void setTheme(String theme) {
-        this.theme = theme;
-    }
 
-    public Boolean getPublished() {
-        return published;
-    }
-
-    public void setPublished(Boolean published) {
-        this.published = published;
+    // ---------------- DYNAMIC REGISTRATION FIELDS ----------------
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class FormField {
+        private String label;
+        private String type;           // text, dropdown, checkbox, radio
+        private boolean required;
+        private List<String> options;
+        private String placeholder;
     }
 }
