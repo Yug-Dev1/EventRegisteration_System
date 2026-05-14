@@ -1,7 +1,7 @@
 package com.MiniProject.eventregistration.config;
 
 import com.MiniProject.eventregistration.Service.JwtService;
-import com.MiniProject.eventregistration.entity.Role;
+import com.MiniProject.eventregistration.entity.Enums.Role;
 import com.MiniProject.eventregistration.entity.User;
 import com.MiniProject.eventregistration.repository.UserRepo;
 import jakarta.servlet.http.HttpServletRequest;

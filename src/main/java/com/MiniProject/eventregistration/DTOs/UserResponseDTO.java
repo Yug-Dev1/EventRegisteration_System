@@ -1,7 +1,7 @@
 package com.MiniProject.eventregistration.DTOs;
 
 import java.util.List;
-import com.MiniProject.eventregistration.entity.Role;
+import com.MiniProject.eventregistration.entity.Enums.Role;
 
 public class UserResponseDTO {
 

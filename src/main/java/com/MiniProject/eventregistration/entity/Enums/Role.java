@@ -1,4 +1,4 @@
-package com.MiniProject.eventregistration.entity;
+package com.MiniProject.eventregistration.entity.Enums;
 
 public enum Role {
     ROLE_USER,

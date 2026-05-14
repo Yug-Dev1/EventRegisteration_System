@@ -1,8 +1,8 @@
 package com.MiniProject.eventregistration.entity;
 
+import com.MiniProject.eventregistration.entity.Enums.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.util.List;

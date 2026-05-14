@@ -1,6 +1,7 @@
 package com.MiniProject.eventregistration.Service;
 
 import com.MiniProject.eventregistration.entity.*;
+import com.MiniProject.eventregistration.entity.Enums.RegistrationStatus;
 import com.MiniProject.eventregistration.exception.ResourceNotFound;
 import com.MiniProject.eventregistration.repository.*;
 import org.springframework.stereotype.Service;

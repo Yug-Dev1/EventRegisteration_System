@@ -1,5 +1,9 @@
 package com.MiniProject.eventregistration.mongo.document;
 
+import com.MiniProject.eventregistration.entity.Enums.EventType;
+import com.MiniProject.eventregistration.entity.Enums.FormFieldType;
+import com.MiniProject.eventregistration.entity.Enums.PaymentStatus;
+import com.MiniProject.eventregistration.entity.Enums.TicketTierType;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -23,7 +27,7 @@ public class EventPageConfig {
     private Long eventId;
 
     // MOVIE, MARATHON, PARTY, WORKSHOP, CONCERT, FESTIVAL, SPORTS, TECH_EVENT
-    private String eventType;
+    private EventType eventType;
 
     private MediaConfig media;
 
@@ -119,7 +123,7 @@ public class EventPageConfig {
     @AllArgsConstructor
     @Builder
     public static class TicketTier {
-        private String name;           // VIP, Gold, General
+        private TicketTierType name;           // VIP, Gold, General
         private Double price;
         private Integer quantity;
         private List<String> benefits;
@@ -133,7 +137,7 @@ public class EventPageConfig {
     @Builder
     public static class FormField {
         private String label;
-        private String type;           // text, dropdown, checkbox, radio
+        private FormFieldType type;           // text, dropdown, checkbox, radio
         private boolean required;
         private List<String> options;
         private String placeholder;

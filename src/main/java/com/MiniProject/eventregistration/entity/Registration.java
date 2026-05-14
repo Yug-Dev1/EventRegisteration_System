@@ -1,5 +1,6 @@
 package com.MiniProject.eventregistration.entity;
 
+import com.MiniProject.eventregistration.entity.Enums.RegistrationStatus;
 import jakarta.persistence.*;
 import lombok.*;
 

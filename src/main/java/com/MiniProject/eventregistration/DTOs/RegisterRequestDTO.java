@@ -1,6 +1,6 @@
 package com.MiniProject.eventregistration.DTOs;
 
-import com.MiniProject.eventregistration.entity.Role;
+import com.MiniProject.eventregistration.entity.Enums.Role;
 import jakarta.validation.constraints.*;
 
 import java.util.List;

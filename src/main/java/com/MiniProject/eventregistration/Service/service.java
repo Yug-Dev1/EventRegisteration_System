@@ -2,7 +2,7 @@ package com.MiniProject.eventregistration.Service;
 
 import com.MiniProject.eventregistration.DTOs.RegisterRequestDTO;
 import com.MiniProject.eventregistration.DTOs.UserResponseDTO;
-import com.MiniProject.eventregistration.entity.Role;
+import com.MiniProject.eventregistration.entity.Enums.Role;
 import com.MiniProject.eventregistration.entity.User;
 import com.MiniProject.eventregistration.exception.ResourceNotFound;
 import com.MiniProject.eventregistration.repository.UserRepo;
