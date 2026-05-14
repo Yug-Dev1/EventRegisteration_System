@@ -9,4 +9,6 @@ public interface EventPageConfigRepository
         extends MongoRepository<EventPageConfig, String> {
     Optional<EventPageConfig> findByEventId(Long eventId);
     boolean existsByEventId(Long eventId);
+
+    void deleteByEventId(Long id);
 }

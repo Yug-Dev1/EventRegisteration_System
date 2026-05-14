@@ -165,4 +165,15 @@ public class EventService {
 
         return savedEvent;
     }
+
+    @Transactional
+    public String deleteEvent(Long id) {
+
+        Event event=eventRepo.findById(id).orElseThrow(()->new ResourceNotFound("Event Doesn't Exists"));
+
+        eventPageConfigRepository.deleteByEventId(id);
+        eventRepo.delete(event);
+
+        return "Event deleted successfully";
+    }
 }
