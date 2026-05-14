@@ -56,7 +56,6 @@ public class AppConfigs {
 
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**", "/oauth2/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/events").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
 
                         .anyRequest().authenticated()

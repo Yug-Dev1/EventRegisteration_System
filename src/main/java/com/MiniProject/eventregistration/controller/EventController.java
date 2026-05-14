@@ -1,5 +1,6 @@
 package com.MiniProject.eventregistration.controller;
 
+import com.MiniProject.eventregistration.DTOs.EventCreateDTO;
 import com.MiniProject.eventregistration.DTOs.EventResponseDTO;
 import com.MiniProject.eventregistration.Service.EventService;
 import com.MiniProject.eventregistration.entity.Event;
@@ -7,6 +8,7 @@ import com.MiniProject.eventregistration.mongo.service_mongo.EventPageConfigServ
 import com.MiniProject.eventregistration.repository.EventRepo;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,11 +28,8 @@ public class EventController {
     }
 
     @PostMapping
-    public Event createEvent(@Valid @RequestBody Event event){
-        event.setAvailableSeats(event.getMaxSeats());
-        Event savedEvent = eventRepo.save(event);
-        eventPageConfigService.createDefaultConfig(savedEvent.getId());
-        return savedEvent;
+    public Event createEvent(@Valid @RequestBody EventCreateDTO dto) {
+        return eventService.createEvent(dto);
     }
 
     @GetMapping
@@ -41,5 +40,13 @@ public class EventController {
     @GetMapping("/{id}")
     public EventResponseDTO getEvent(@PathVariable Long id){
         return eventService.getEvent(id);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<EventResponseDTO> updateEvent(
+            @PathVariable Long id,
+            @RequestBody EventResponseDTO dto
+    ) {
+        return ResponseEntity.ok(eventService.updateEvent(id, dto));
     }
 }
