@@ -11,6 +11,7 @@ import com.MiniProject.eventregistration.mongo.document.RegistrationAnswers;
 import com.MiniProject.eventregistration.mongo.repository_mongo.EventPageConfigRepository;
 import com.MiniProject.eventregistration.mongo.repository_mongo.RegistrationAnswerRepository;
 import com.MiniProject.eventregistration.repository.*;
+import jakarta.transaction.Transactional;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -134,18 +135,37 @@ public class RegistrationService {
                 .build();
     }
 
-    public void cancelRegistration(Long userID,Long eventID){
-        User user=userRepo.findById(userID).orElseThrow(()->new ResourceNotFound("user doesn't EXIST"));
+    @Transactional
+    public void cancelRegistration(Long eventID){
+        String email=SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+
+        User user=userRepo.findByEmail(email).orElseThrow(()->new ResourceNotFound("user doesn't EXIST"));
         Event event= eventRepo.findById(eventID).orElseThrow(()-> new ResourceNotFound("event doesn't EXIST"));
         Registration registration = registerRepo.findByUserAndEvent(user, event)
                 .orElseThrow(() -> new ResourceNotFound("Registration not found"));
 
-        if(registration.getStatus()==RegistrationStatus.CANCELLED){
+        if(registration.getStatus()==RegistrationStatus.CANCELLED) {
             throw new RuntimeException("Already CANCELLED");
         }
+
+       event.setAvailableSeats(event.getAvailableSeats()+registration.getTicketCount());
+       EventPageConfig eventPageConfig=eventPageConfigRepository.findByEventId(eventID).orElseThrow(()-> new ResourceNotFound("Does now exist"));
+
+       EventPageConfig.TicketTier tier=eventPageConfig.getTicketTiers()
+                       .stream().filter(t->t.getName().equalsIgnoreCase(registration.getTicketTierName()))
+                       .findFirst()
+                        .orElseThrow(()->new ResourceNotFound("Tier doesn't exists"));
+
+       tier.setQuantity(tier.getQuantity()+registration.getTicketCount());
         registration.setStatus(RegistrationStatus.CANCELLED);
-       event.setAvailableSeats(event.getAvailableSeats()+1);
-       registerRepo.save(registration);
+
+        eventRepo.save(event);
+
+        eventPageConfigRepository.save(eventPageConfig);
+
+        registerRepo.save(registration);
     }
 }
 

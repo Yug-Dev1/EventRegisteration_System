@@ -24,12 +24,10 @@ public class RegistrationController {
         return registrationService.registerUser(dto);
     }
 
-    @DeleteMapping
-    public String cancelRegistration(
-            @RequestParam Long userId,
-            @RequestParam Long eventId
-    ) {
-        registrationService.cancelRegistration(userId, eventId);
+    @DeleteMapping("/cancel/{eventId}")
+    public String cancelRegistration(@PathVariable Long eventId) {
+        registrationService.cancelRegistration(eventId);
         return "Registration cancelled successfully";
+
     }
 }
