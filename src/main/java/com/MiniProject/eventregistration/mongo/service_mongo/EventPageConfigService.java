@@ -1,5 +1,6 @@
 package com.MiniProject.eventregistration.mongo.service_mongo;
 
+import com.MiniProject.eventregistration.entity.Enums.EventType;
 import com.MiniProject.eventregistration.mongo.document.EventPageConfig;
 import com.MiniProject.eventregistration.mongo.repository_mongo.EventPageConfigRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,7 @@ public class EventPageConfigService {
 
         EventPageConfig defaultConfig = EventPageConfig.builder()
                 .eventId(eventId)
-                .eventType("GENERAL")
+                .eventType(EventType.GENERAL)
                 .media(EventPageConfig.MediaConfig.builder()
                         .bannerImageUrl("")
                         .thumbnailUrl("")

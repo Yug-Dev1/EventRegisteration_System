@@ -30,4 +30,6 @@ public class Event {
     private int maxSeats;
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Integer availableSeats;
+
+    private Boolean allowMultipleTickets = true;
 }

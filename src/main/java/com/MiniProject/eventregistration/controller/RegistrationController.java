@@ -1,11 +1,14 @@
 package com.MiniProject.eventregistration.controller;
 
+import com.MiniProject.eventregistration.DTOs.RegistrationRequestDTO;
+import com.MiniProject.eventregistration.DTOs.RegistrationResponseDTO;
 import com.MiniProject.eventregistration.entity.Registration;
 import com.MiniProject.eventregistration.Service.RegistrationService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/register")
+@RequestMapping("/registrations")
 public class RegistrationController {
 
     private final RegistrationService registrationService;
@@ -15,11 +18,10 @@ public class RegistrationController {
     }
 
     @PostMapping
-    public Registration registerUser(
-            @RequestParam Long userId,
-            @RequestParam Long eventId
+    public RegistrationResponseDTO registerForEvent(
+            @Valid @RequestBody RegistrationRequestDTO dto
     ) {
-        return registrationService.registerUser(userId, eventId);
+        return registrationService.registerUser(dto);
     }
 
     @DeleteMapping

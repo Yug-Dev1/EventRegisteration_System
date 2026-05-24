@@ -2,6 +2,7 @@ package com.MiniProject.eventregistration.Service;
 
 import com.MiniProject.eventregistration.DTOs.EventCreateDTO;
 import com.MiniProject.eventregistration.DTOs.EventResponseDTO;
+import com.MiniProject.eventregistration.entity.Enums.EventType;
 import com.MiniProject.eventregistration.entity.Event;
 import com.MiniProject.eventregistration.exception.ResourceNotFound;
 import com.MiniProject.eventregistration.mongo.document.EventPageConfig;
@@ -155,7 +156,7 @@ public class EventService {
 
         if (config == null) {
             config = EventPageConfig.builder()
-                    .eventType("GENERAL")
+                    .eventType(EventType.GENERAL)
                     .build();
         }
 

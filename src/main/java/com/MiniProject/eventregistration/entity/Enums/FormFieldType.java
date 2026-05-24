@@ -1,14 +1,15 @@
 package com.MiniProject.eventregistration.entity.Enums;
 
-public enum FormFieldType {
-    TEXT,
-    TEXTAREA,
-    NUMBER,
-    EMAIL,
-    PHONE,
-    DROPDOWN,
-    CHECKBOX,
-    RADIO,
-    DATE
+import com.fasterxml.jackson.annotation.JsonCreator;
 
+public enum FormFieldType {
+    text,
+    textarea,
+    number,
+    email,
+    phone,
+    dropdown,
+    checkbox,
+    radio,
+    date;
 }

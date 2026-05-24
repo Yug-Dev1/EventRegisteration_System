@@ -2,8 +2,6 @@ package com.MiniProject.eventregistration.mongo.document;
 
 import com.MiniProject.eventregistration.entity.Enums.EventType;
 import com.MiniProject.eventregistration.entity.Enums.FormFieldType;
-import com.MiniProject.eventregistration.entity.Enums.PaymentStatus;
-import com.MiniProject.eventregistration.entity.Enums.TicketTierType;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -123,7 +121,7 @@ public class EventPageConfig {
     @AllArgsConstructor
     @Builder
     public static class TicketTier {
-        private TicketTierType name;           // VIP, Gold, General
+        private String name;           // VIP, Gold, General
         private Double price;
         private Integer quantity;
         private List<String> benefits;
