@@ -35,6 +35,7 @@ public class RegistrationService {
         this.registrationAnswerRepository=registrationAnswerRepository;
     }
 
+    @Transactional
     public RegistrationResponseDTO registerUser(RegistrationRequestDTO dto) {
         String email= SecurityContextHolder.getContext()
                 .getAuthentication()
@@ -42,6 +43,10 @@ public class RegistrationService {
 
         User user=userRepo.findByEmail(email).orElseThrow(()-> new ResourceNotFound("User Doesn't Exist"));
         Event event=eventRepo.findById(dto.getEventId()).orElseThrow(()-> new ResourceNotFound("Event Doesn't Exist"));
+
+        if (registerRepo.existsByUserAndEvent(user, event)) {
+            throw new RuntimeException("You have already registered for this event");
+        }
 
         EventPageConfig eventPageConfig= eventPageConfigRepository.findByEventId(dto.getEventId()).orElseThrow(()-> new ResourceNotFound("Event Config Doesn't Exist"));
 
