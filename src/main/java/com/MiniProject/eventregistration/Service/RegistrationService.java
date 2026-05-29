@@ -11,9 +11,9 @@ import com.MiniProject.eventregistration.mongo.document.RegistrationAnswers;
 import com.MiniProject.eventregistration.mongo.repository_mongo.EventPageConfigRepository;
 import com.MiniProject.eventregistration.mongo.repository_mongo.RegistrationAnswerRepository;
 import com.MiniProject.eventregistration.repository.*;
-import jakarta.transaction.Transactional;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -27,61 +27,73 @@ public class RegistrationService {
     private final EventPageConfigRepository eventPageConfigRepository;
     private final RegistrationAnswerRepository registrationAnswerRepository;
 
-    public RegistrationService(UserRepo userRepo, EventRepo eventRepo, RegisterRepo registerRepo,EventPageConfigRepository eventPageConfigRepository,RegistrationAnswerRepository registrationAnswerRepository) {
+    public RegistrationService(
+            UserRepo userRepo,
+            EventRepo eventRepo,
+            RegisterRepo registerRepo,
+            EventPageConfigRepository eventPageConfigRepository,
+            RegistrationAnswerRepository registrationAnswerRepository
+    ) {
         this.userRepo = userRepo;
         this.eventRepo = eventRepo;
         this.registerRepo = registerRepo;
-        this.eventPageConfigRepository=eventPageConfigRepository;
-        this.registrationAnswerRepository=registrationAnswerRepository;
+        this.eventPageConfigRepository = eventPageConfigRepository;
+        this.registrationAnswerRepository = registrationAnswerRepository;
     }
 
     @Transactional
     public RegistrationResponseDTO registerUser(RegistrationRequestDTO dto) {
-        String email= SecurityContextHolder.getContext()
+
+        String email = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
 
-        User user=userRepo.findByEmail(email).orElseThrow(()-> new ResourceNotFound("User Doesn't Exist"));
-        Event event=eventRepo.findById(dto.getEventId()).orElseThrow(()-> new ResourceNotFound("Event Doesn't Exist"));
+        User user = userRepo.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFound("User doesn't exist"));
+
+        Event event = eventRepo.findById(dto.getEventId())
+                .orElseThrow(() -> new ResourceNotFound("Event doesn't exist"));
 
         if (registerRepo.existsByUserAndEvent(user, event)) {
-            throw new RuntimeException("You have already registered for this event");
+            throw new RuntimeException("Already registered");
         }
 
-        EventPageConfig eventPageConfig= eventPageConfigRepository.findByEventId(dto.getEventId()).orElseThrow(()-> new ResourceNotFound("Event Config Doesn't Exist"));
+        EventPageConfig eventPageConfig = eventPageConfigRepository.findByEventId(dto.getEventId())
+                .orElseThrow(() -> new ResourceNotFound("Event config doesn't exist"));
 
-        // Event expired
         if (event.getDate().isBefore(LocalDate.now())) {
             throw new RuntimeException("Event already completed");
         }
-        // Age validation
+
         if (user.getAge() < event.getMinAge() || user.getAge() > event.getMaxAge()) {
             throw new RuntimeException("User does not meet age requirements");
         }
-        // Multiple ticket rule
-        if ((event.getAllowMultipleTickets()!=null && !event.getAllowMultipleTickets()) && dto.getTicketCount() > 1) {
-            throw new RuntimeException("Only one ticket allowed for this event");
+
+        if ((event.getAllowMultipleTickets() != null
+                && !event.getAllowMultipleTickets())
+                && dto.getTicketCount() > 1) {
+            throw new RuntimeException("Only one ticket allowed");
         }
-        // Seat validation
+
         if (event.getAvailableSeats() < dto.getTicketCount()) {
             throw new RuntimeException("Not enough seats available");
         }
 
-        EventPageConfig.TicketTier selectedTier=eventPageConfig.getTicketTiers()
-                .stream()//Converts the List into a Stream so you can use functional operations on it
-                .filter(t -> t.getName().equalsIgnoreCase(dto.getTicketTierName()))//loops through each tier
+        EventPageConfig.TicketTier selectedTier = eventPageConfig.getTicketTiers()
+                .stream()
+                .filter(t -> t.getName().equalsIgnoreCase(dto.getTicketTierName()))
                 .findFirst()
-                .orElseThrow(()-> new ResourceNotFound("Ticket Tier DOESN'T Exist"));
+                .orElseThrow(() -> new ResourceNotFound("Ticket tier doesn't exist"));
 
-        if(selectedTier.getQuantity() < dto.getTicketCount()){
-                throw new RuntimeException("Not enough tickets");
+        if (selectedTier.getQuantity() < dto.getTicketCount()) {
+            throw new RuntimeException("Not enough tickets");
         }
 
-        if(eventPageConfig.getCustomFormFields()!=null){
-            for(EventPageConfig.FormField formField : eventPageConfig.getCustomFormFields()){
-                if(formField.isRequired()){
-                    if(dto.getAnswers() == null || !dto.getAnswers().containsKey(formField.getLabel()) )
-                    {
+        if (eventPageConfig.getCustomFormFields() != null) {
+            for (EventPageConfig.FormField formField : eventPageConfig.getCustomFormFields()) {
+                if (formField.isRequired()) {
+                    if (dto.getAnswers() == null
+                            || !dto.getAnswers().containsKey(formField.getLabel())) {
                         throw new RuntimeException(
                                 "Missing required field: " + formField.getLabel()
                         );
@@ -90,43 +102,61 @@ public class RegistrationService {
             }
         }
 
-        Double totalAmt=dto.getTicketCount()*selectedTier.getPrice();
+        Double totalAmt = dto.getTicketCount() * selectedTier.getPrice();
 
-        //Seat logic for SQL
-        event.setAvailableSeats(event.getAvailableSeats() - dto.getTicketCount());
-        eventRepo.save(event);
+        Registration savedRegistration = null;
+        boolean mongoSeatUpdated = false;
 
-        //Seat logic for MongoDB
-        selectedTier.setQuantity(selectedTier.getQuantity() - dto.getTicketCount());
-        eventPageConfigRepository.save(eventPageConfig);
+        try {
+            // SQL seat update
+            event.setAvailableSeats(event.getAvailableSeats() - dto.getTicketCount());
+            eventRepo.save(event);
 
-        // Save registration
-        Registration registration = Registration.builder()
-                .user(user)
-                .event(event)
-                .ticketTierName(selectedTier.getName())
-                .ticketCount(dto.getTicketCount())
-                .totalAmount(totalAmt)
-                .paymentStatus(PaymentStatus.SUCCESS)
-                .status(RegistrationStatus.ACTIVE)
-                .registrationDate(LocalDateTime.now())
-                .build();
+            // Mongo seat update
+            selectedTier.setQuantity(selectedTier.getQuantity() - dto.getTicketCount());
+            eventPageConfigRepository.save(eventPageConfig);
+            mongoSeatUpdated = true;
 
-        Registration savedRegistration = registerRepo.save(registration);
-        // Save answers in Mongo
-        if (dto.getAnswers() != null && !dto.getAnswers().isEmpty()) {
-            RegistrationAnswers answers = RegistrationAnswers.builder()
-                    .registrationId(savedRegistration.getId())
-                    .userId(user.getId())
-                    .eventId(event.getId())
-                    .answers(dto.getAnswers())
+            // SQL registration
+            Registration registration = Registration.builder()
+                    .user(user)
+                    .event(event)
+                    .ticketTierName(selectedTier.getName())
+                    .ticketCount(dto.getTicketCount())
+                    .totalAmount(totalAmt)
+                    .paymentStatus(PaymentStatus.SUCCESS)
+                    .status(RegistrationStatus.ACTIVE)
+                    .registrationDate(LocalDateTime.now())
                     .build();
 
-            registrationAnswerRepository.save(answers);
+            savedRegistration = registerRepo.save(registration);
 
+            // Mongo answers
+            if (dto.getAnswers() != null && !dto.getAnswers().isEmpty()) {
+                RegistrationAnswers answers = RegistrationAnswers.builder()
+                        .registrationId(savedRegistration.getId())
+                        .userId(user.getId())
+                        .eventId(event.getId())
+                        .answers(dto.getAnswers())
+                        .build();
+
+                registrationAnswerRepository.save(answers);
+            }
+
+        } catch (Exception ex) {
+
+            // compensate Mongo if already updated
+            if (mongoSeatUpdated) {
+                try {
+                    selectedTier.setQuantity(selectedTier.getQuantity() + dto.getTicketCount());
+                    eventPageConfigRepository.save(eventPageConfig);
+                } catch (Exception ignored) {
+                }
+            }
+
+            throw new RuntimeException("Registration failed", ex);
         }
 
-        // Response
         return RegistrationResponseDTO.builder()
                 .registrationId(savedRegistration.getId())
                 .eventTitle(event.getTitle())
@@ -155,24 +185,36 @@ public class RegistrationService {
             throw new RuntimeException("Already CANCELLED");
         }
 
-       event.setAvailableSeats(event.getAvailableSeats()+registration.getTicketCount());
-       EventPageConfig eventPageConfig=eventPageConfigRepository.findByEventId(eventID).orElseThrow(()-> new ResourceNotFound("Does now exist"));
+        event.setAvailableSeats(event.getAvailableSeats()+registration.getTicketCount());
+        EventPageConfig eventPageConfig=eventPageConfigRepository.findByEventId(eventID).orElseThrow(()-> new ResourceNotFound("Does not exist"));
 
-       EventPageConfig.TicketTier tier=eventPageConfig.getTicketTiers()
-                       .stream().filter(t->t.getName().equalsIgnoreCase(registration.getTicketTierName()))
-                       .findFirst()
-                        .orElseThrow(()->new ResourceNotFound("Tier doesn't exists"));
+        EventPageConfig.TicketTier tier=eventPageConfig.getTicketTiers()
+                .stream().filter(t->t.getName().equalsIgnoreCase(registration.getTicketTierName()))
+                .findFirst()
+                .orElseThrow(()->new ResourceNotFound("Tier doesn't exists"));
 
-       tier.setQuantity(tier.getQuantity()+registration.getTicketCount());
-        registration.setStatus(RegistrationStatus.CANCELLED);
+        int oldQuantity= tier.getQuantity();
+        boolean mongoUpdated=false;
+        try {
+            tier.setQuantity(tier.getQuantity() + registration.getTicketCount());
+            registration.setStatus(RegistrationStatus.CANCELLED);
 
-        eventRepo.save(event);
-
-        eventPageConfigRepository.save(eventPageConfig);
-
-        registerRepo.save(registration);
+            eventRepo.save(event);
+            eventPageConfigRepository.save(eventPageConfig);
+            mongoUpdated=true;
+            registerRepo.save(registration);
+        }catch (Exception ex) {
+            // compensate mongo if already updated
+            if (mongoUpdated) {
+                try {
+                    tier.setQuantity(oldQuantity);
+                    eventPageConfigRepository.save(eventPageConfig);
+                } catch (Exception ignored) {
+                }
+            }
+            throw new RuntimeException("Cancellation failed", ex);
     }
-}
+}}
 
 // For Validation
 

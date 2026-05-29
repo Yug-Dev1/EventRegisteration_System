@@ -7,6 +7,7 @@ import com.MiniProject.eventregistration.entity.User;
 import com.MiniProject.eventregistration.exception.ResourceNotFound;
 import com.MiniProject.eventregistration.repository.UserRepo;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -39,6 +40,7 @@ public class service {
         return userRepo.findAll();
     }
 
+    @Transactional
     public UserResponseDTO register(RegisterRequestDTO dto) {
 
         User user = new User();

@@ -120,21 +120,45 @@ public class EventService {
                 config.setCustomFormFields(incoming.getCustomFormFields());
         }
 
-        eventRepo.save(event);
-        eventPageConfigRepository.save(config);
-
-        return EventResponseDTO.builder()
-                .id(event.getId())
-                .title(event.getTitle())
-                .description(event.getDescription())
-                .location(event.getLocation())
-                .date(event.getDate())
-                .minAge(event.getMinAge())
-                .maxAge(event.getMaxAge())
-                .maxSeats(event.getMaxSeats())
-                .availableSeats(event.getAvailableSeats())
-                .pageConfig(config)
+        boolean mongoUpdated = false;
+        EventPageConfig oldConfig = EventPageConfig.builder()
+                .id(config.getId())
+                .eventId(config.getEventId())
+                .eventType(config.getEventType())
+                .media(config.getMedia())
+                .theme(config.getTheme())
+                .schedule(config.getSchedule())
+                .participants(config.getParticipants())
+                .faq(config.getFaq())
+                .ticketTiers(config.getTicketTiers())
+                .customAttributes(config.getCustomAttributes())
+                .customFormFields(config.getCustomFormFields())
                 .build();
+        try {
+            eventRepo.save(event);
+            eventPageConfigRepository.save(config);
+            mongoUpdated = true;
+            return EventResponseDTO.builder()
+                    .id(event.getId())
+                    .title(event.getTitle())
+                    .description(event.getDescription())
+                    .location(event.getLocation())
+                    .date(event.getDate())
+                    .minAge(event.getMinAge())
+                    .maxAge(event.getMaxAge())
+                    .maxSeats(event.getMaxSeats())
+                    .availableSeats(event.getAvailableSeats())
+                    .pageConfig(config)
+                    .build();
+        }catch(Exception ex){
+            if (mongoUpdated) {
+                try {
+                    eventPageConfigRepository.save(oldConfig);
+                } catch (Exception ignored) {
+                }
+            }
+            throw new RuntimeException("Updation failed", ex);
+        }
     }
 
     public Event createEvent(EventCreateDTO dto) {
@@ -170,10 +194,21 @@ public class EventService {
     @Transactional
     public String deleteEvent(Long id) {
 
-        Event event=eventRepo.findById(id).orElseThrow(()->new ResourceNotFound("Event Doesn't Exists"));
+        Event event = eventRepo.findById(id)
+                .orElseThrow(() -> new ResourceNotFound("Event Doesn't Exists"));
+
+        EventPageConfig configBackup = eventPageConfigRepository.findByEventId(id) .orElseThrow(() -> new ResourceNotFound("Event Page Doesn't Exists"));
 
         eventPageConfigRepository.deleteByEventId(id);
-        eventRepo.delete(event);
+
+        try {
+            eventRepo.delete(event);
+        } catch (Exception e) {
+            if (configBackup != null) {
+                eventPageConfigRepository.save(configBackup);
+            }
+            throw new RuntimeException("Delete failed, changes rolled back: " + e.getMessage());
+        }
 
         return "Event deleted successfully";
     }
