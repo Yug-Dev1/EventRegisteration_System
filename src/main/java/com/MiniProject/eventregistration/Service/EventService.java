@@ -9,11 +9,10 @@ import com.MiniProject.eventregistration.mongo.document.EventPageConfig;
 import com.MiniProject.eventregistration.mongo.repository_mongo.EventPageConfigRepository;
 import com.MiniProject.eventregistration.repository.EventRepo;
 import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class EventService {
@@ -46,10 +45,10 @@ public class EventService {
                 .build();
     }
 
-    public List<Event> getAllEvents(){
-        return eventRepo.findAll();
+    public Page<Event> getAllEvents(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return eventRepo.findAll(pageable);
     }
-
     @Transactional
     public EventResponseDTO updateEvent(Long id, EventResponseDTO dto) {
 

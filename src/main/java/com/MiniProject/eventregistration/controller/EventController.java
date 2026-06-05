@@ -8,6 +8,7 @@ import com.MiniProject.eventregistration.mongo.service_mongo.EventPageConfigServ
 import com.MiniProject.eventregistration.repository.EventRepo;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,8 +34,10 @@ public class EventController {
     }
 
     @GetMapping
-    public List<Event> getAllEvents() {
-        return eventService.getAllEvents();
+    public ResponseEntity<Page<Event>> getAllEvents(@RequestParam(defaultValue = "0")int page,@RequestParam(defaultValue = "15")int size) {
+        return ResponseEntity.ok(
+                eventService.getAllEvents(page, size)
+        );
     }
 
     @GetMapping("/{id}")

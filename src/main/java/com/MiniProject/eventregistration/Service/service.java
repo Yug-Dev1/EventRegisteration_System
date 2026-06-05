@@ -9,8 +9,12 @@ import com.MiniProject.eventregistration.repository.UserRepo;
 
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
 
@@ -36,8 +40,9 @@ public class service {
         );
     }
 
-    public List<User> getAllUsers() {
-        return userRepo.findAll();
+    public Page<User> getAllUsers(int page,int size) {
+        Pageable pageable= PageRequest.of(page, size);
+        return userRepo.findAll(pageable);
     }
 
     @Transactional

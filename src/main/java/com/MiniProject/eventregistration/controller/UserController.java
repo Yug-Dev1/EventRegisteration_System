@@ -3,6 +3,8 @@ package com.MiniProject.eventregistration.controller;
 import com.MiniProject.eventregistration.Service.service;
 import com.MiniProject.eventregistration.entity.User;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,8 +24,10 @@ public class UserController {
     }
 
     @GetMapping
-    public List<User> getAllUser(){
-        return userService.getAllUsers();
+    public ResponseEntity<Page<User>> getAllUser(@RequestParam(defaultValue = "0")int page, @RequestParam(defaultValue = "15")int size){
+        return ResponseEntity.ok(
+            userService.getAllUsers(page, size)
+        );
     }
 }
 
