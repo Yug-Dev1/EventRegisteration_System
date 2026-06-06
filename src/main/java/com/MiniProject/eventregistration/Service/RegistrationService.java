@@ -215,34 +215,3 @@ public class RegistrationService {
             throw new RuntimeException("Cancellation failed", ex);
     }
 }}
-
-// For Validation
-
-// Spring Security stores authenticated user info for current request thread.
-// SecurityContextHolder -> current security container
-// getContext() -> current request's security context
-// getAuthentication() -> authenticated user token object set by JwtFilter
-// getName() -> principal name (in our case JWT subject = user email)
-// Used so client never sends userId manually; backend derives user securely from JWT.
-
-/* --------------------------------------*/
-
-/* Never trust frontend input.*/
-// For fields like age, no. of tickets that could be validated at the start
-
-// Frontend validation improves UX only.
-// Backend validation enforces actual business/security rules.
-//
-// Example:
-// Frontend may restrict ticketCount to max 5 via UI,
-// but attacker can bypass frontend and directly call API via Postman:
-//
-// {
-//   "ticketCount": 999
-// }
-//
-// Therefore backend must ALWAYS validate:
-// age eligibility
-// seat availability
-// ticket tier existence
-// required form fields
