@@ -4,27 +4,21 @@ import com.MiniProject.eventregistration.DTOs.EventCreateDTO;
 import com.MiniProject.eventregistration.DTOs.EventResponseDTO;
 import com.MiniProject.eventregistration.Service.EventService;
 import com.MiniProject.eventregistration.entity.Event;
-import com.MiniProject.eventregistration.mongo.service_mongo.EventPageConfigService;
 import com.MiniProject.eventregistration.repository.EventRepo;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/events")
 public class EventController {
 
     private final EventService eventService;
-    private final EventPageConfigService eventPageConfigService;
     private final EventRepo eventRepo;
 
-    public EventController(EventService eventService, EventPageConfigService eventPageConfigService, EventRepo eventRepo) {
+    public EventController(EventService eventService, EventRepo eventRepo) {
         this.eventService = eventService;
-        this.eventPageConfigService = eventPageConfigService;
         this.eventRepo = eventRepo;
     }
 
@@ -54,7 +48,6 @@ public class EventController {
     }
 
     @DeleteMapping("/{id}")
-
     public ResponseEntity<String> deleteEvent(@PathVariable Long id) {
 
         return ResponseEntity.ok(eventService.deleteEvent(id));

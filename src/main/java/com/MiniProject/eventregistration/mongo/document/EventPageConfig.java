@@ -21,8 +21,6 @@ public class EventPageConfig {
     @Id
     private String id;
 
-    @NotNull(message = "Event ID is required")
-    @Positive(message = "Event ID must be positive")
     private Long eventId;
 
     @NotNull(message = "Event type is required")

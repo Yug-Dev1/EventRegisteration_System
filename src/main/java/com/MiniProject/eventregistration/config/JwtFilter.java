@@ -32,6 +32,12 @@ public class JwtFilter extends OncePerRequestFilter {
 
         String authHeader = request.getHeader("Authorization");
 
+        String path = request.getServletPath();
+        if (path.startsWith("/auth/") || path.startsWith("/oauth2/")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         if (authHeader == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json");

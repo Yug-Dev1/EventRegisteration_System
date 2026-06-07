@@ -1,0 +1,128 @@
+{
+  "info": {
+    "_postman_id": "189046ec-6f52-448a-9704-2147d4b9cf89",
+    "name": "Event Registration System",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "52997987",
+    "_collection_link": "https://go.postman.co/collection/52997987-189046ec-6f52-448a-9704-2147d4b9cf89?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        }
+      ],
+      "description": "Handles user authentication and authorization.\n\nIncludes:  \n• User Registration  \n• JWT Login  \n• Google OAuth2 Login\n\nReturns JWT tokens used to access protected APIs.  \nSupports Role-Based Access Control (USER, ORGANIZER, ADMIN)."
+    },
+    {
+      "name": "Registrations",
+      "item": [
+        {
+          "name": "Register for a event",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "Cancel Registration",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        }
+      ],
+      "description": "Manages event registrations.\n\nFeatures:  \n• Register for an event  \n• Ticket tier selection  \n• Dynamic custom form submission  \n• Registration cancellation\n\nSupports MongoDB-based custom registration responses."
+    },
+    {
+      "name": "Events",
+      "item": [
+        {
+          "name": "Create Event",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "Get all events",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Event",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "Event by ID",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "New Request",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        }
+      ],
+      "description": "Manages event lifecycle and event page configuration.\n\nFeatures:  \n• Create event  \n• View events  \n• Update event  \n• Delete event  \n• Pagination support\n\nStores core event data in MySQL and dynamic event page configuration in MongoDB."
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Get all users",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        }
+      ],
+      "description": "User management APIs.\n\nFeatures:  \n• View registered users  \n• Pagination support\n\nProtected endpoints requiring valid authentication."
+    },
+    {
+      "name": "Admin",
+      "item": [
+        {
+          "name": "Admin Test",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

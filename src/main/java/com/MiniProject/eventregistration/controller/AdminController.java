@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class AdminController {
 
     @GetMapping("/test")
-
     public String adminTest() {
         return "Admin access granted!";
     }
