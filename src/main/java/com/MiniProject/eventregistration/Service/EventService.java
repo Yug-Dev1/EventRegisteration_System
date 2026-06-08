@@ -12,6 +12,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -45,8 +46,13 @@ public class EventService {
                 .build();
     }
 
-    public Page<Event> getAllEvents(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+    public Page<Event> getAllEvents(int page, int size,String sortBy,String order) {
+        Sort sort = order.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
+        Pageable pageable =
+                PageRequest.of(page, size, sort);
         return eventRepo.findAll(pageable);
     }
     @Transactional

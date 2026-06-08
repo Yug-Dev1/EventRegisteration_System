@@ -28,9 +28,13 @@ public class EventController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<Event>> getAllEvents(@RequestParam(defaultValue = "0")int page,@RequestParam(defaultValue = "15")int size) {
+    public ResponseEntity<Page<Event>> getAllEvents(@RequestParam(defaultValue = "0")int page,
+                                                    @RequestParam(defaultValue = "15")int size,
+                                                    @RequestParam(defaultValue="date")String sort,
+                                                    @RequestParam(defaultValue = "asc")String order
+                                                                                                ) {
         return ResponseEntity.ok(
-                eventService.getAllEvents(page, size)
+                eventService.getAllEvents(page, size, sort, order)
         );
     }
 
