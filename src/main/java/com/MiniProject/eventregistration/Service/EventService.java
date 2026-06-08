@@ -2,6 +2,7 @@ package com.MiniProject.eventregistration.Service;
 
 import com.MiniProject.eventregistration.DTOs.EventCreateDTO;
 import com.MiniProject.eventregistration.DTOs.EventResponseDTO;
+import com.MiniProject.eventregistration.Service.specification.EventSpecification;
 import com.MiniProject.eventregistration.entity.Enums.EventType;
 import com.MiniProject.eventregistration.entity.Event;
 import com.MiniProject.eventregistration.exception.ResourceNotFound;
@@ -13,7 +14,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import java.util.List;
 
 @Service
 public class EventService {
@@ -46,14 +49,28 @@ public class EventService {
                 .build();
     }
 
-    public Page<Event> getAllEvents(int page, int size,String sortBy,String order) {
+    public Page<Event> getAllEvents(int page, int size,String sortBy,String order,String title, String location,Integer age, EventType eventType) {
         Sort sort = order.equalsIgnoreCase("desc")
                 ? Sort.by(sortBy).descending()
                 : Sort.by(sortBy).ascending();
+        List<Long> eventIds = null;
+        if (eventType != null) {
+            eventIds = eventPageConfigRepository
+                    .findByEventType(eventType)
+                    .stream()
+                    .map(EventPageConfig::getEventId)
+                    .toList();
+        }
+
+        Specification<Event> spec =
+                EventSpecification.titleContains(title)
+                        .and(EventSpecification.locationEquals(location))
+                        .and(EventSpecification.ageEligible(age))
+                        .and(EventSpecification.idIn(eventIds));
 
         Pageable pageable =
                 PageRequest.of(page, size, sort);
-        return eventRepo.findAll(pageable);
+        return eventRepo.findAll(spec,pageable);
     }
     @Transactional
     public EventResponseDTO updateEvent(Long id, EventResponseDTO dto) {

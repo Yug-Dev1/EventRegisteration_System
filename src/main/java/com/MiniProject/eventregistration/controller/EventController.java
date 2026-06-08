@@ -3,10 +3,15 @@ package com.MiniProject.eventregistration.controller;
 import com.MiniProject.eventregistration.DTOs.EventCreateDTO;
 import com.MiniProject.eventregistration.DTOs.EventResponseDTO;
 import com.MiniProject.eventregistration.Service.EventService;
+import com.MiniProject.eventregistration.Service.specification.EventSpecification;
+import com.MiniProject.eventregistration.entity.Enums.EventType;
 import com.MiniProject.eventregistration.entity.Event;
+import com.MiniProject.eventregistration.mongo.document.EventPageConfig;
+import com.MiniProject.eventregistration.mongo.repository_mongo.EventPageConfigRepository;
 import com.MiniProject.eventregistration.repository.EventRepo;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,6 +21,7 @@ public class EventController {
 
     private final EventService eventService;
     private final EventRepo eventRepo;
+
 
     public EventController(EventService eventService, EventRepo eventRepo) {
         this.eventService = eventService;
@@ -31,10 +37,15 @@ public class EventController {
     public ResponseEntity<Page<Event>> getAllEvents(@RequestParam(defaultValue = "0")int page,
                                                     @RequestParam(defaultValue = "15")int size,
                                                     @RequestParam(defaultValue="date")String sort,
-                                                    @RequestParam(defaultValue = "asc")String order
+                                                    @RequestParam(defaultValue = "asc")String order,
+                                                    @RequestParam(required = false) String title,
+                                                    @RequestParam(required = false) String location,
+                                                    @RequestParam(required = false) Integer age,
+                                                    @RequestParam(required = false) EventType eventType
                                                                                                 ) {
+
         return ResponseEntity.ok(
-                eventService.getAllEvents(page, size, sort, order)
+                eventService.getAllEvents(page, size, sort, order, title, location, age, eventType)
         );
     }
 
