@@ -95,6 +95,58 @@ Each event supports customizable event pages:
 
 ---
 
+### Pagination, Sorting & Filtering
+
+The event listing API supports production-ready data retrieval with:
+
+- Pagination using page and size
+- Dynamic sorting using sortBy and direction
+- Filtering by:
+  - Title
+  - Location
+  - Age Eligibility
+  - Event Type
+
+Implemented using Spring Data JPA Specifications and MongoDB queries.
+
+---
+
+## Exception Handling
+
+Centralized exception handling provides consistent API responses for:
+
+- Validation Failures
+- Resource Not Found
+- Duplicate Registrations
+- Invalid Sort Fields
+- JWT Authentication Errors
+- Expired JWT Tokens
+
+---
+
+## Cross-Database Consistency
+
+Implements compensating transaction logic to maintain consistency between MySQL and MongoDB during event updates and prevent partial data modifications.
+
+---
+
+## Security Architecture
+
+### Authentication
+
+- JWT Authentication
+- OAuth2 Login (Google)
+
+### Authorization
+
+Role-Based Access Control (RBAC) using Spring Security.
+
+Supported Roles:
+
+- ROLE_USER
+- ROLE_ADMIN
+- ROLE_ORGANIZER
+
 ## Tech Stack
 
 ### Backend
