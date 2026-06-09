@@ -8,6 +8,15 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(
+        name = "registration",
+        indexes = {
+                @Index(name = "idx_reg_user", columnList = "user_id"),
+                @Index(name = "idx_reg_event", columnList = "event_id"),
+                @Index(name = "idx_reg_status", columnList = "status"),
+                @Index(name = "idx_reg_date", columnList = "registrationDate")
+        }
+)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -51,4 +60,5 @@ public class Registration {
 
     // Timestamp
     private LocalDateTime registrationDate;
+
 }
