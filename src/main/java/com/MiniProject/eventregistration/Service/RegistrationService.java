@@ -1,5 +1,6 @@
 package com.MiniProject.eventregistration.Service;
 
+import com.MiniProject.eventregistration.DTOs.BookingResponseDTO;
 import com.MiniProject.eventregistration.DTOs.RegistrationRequestDTO;
 import com.MiniProject.eventregistration.DTOs.RegistrationResponseDTO;
 import com.MiniProject.eventregistration.entity.*;
@@ -11,10 +12,12 @@ import com.MiniProject.eventregistration.mongo.document.RegistrationAnswers;
 import com.MiniProject.eventregistration.mongo.repository_mongo.EventPageConfigRepository;
 import com.MiniProject.eventregistration.mongo.repository_mongo.RegistrationAnswerRepository;
 import com.MiniProject.eventregistration.repository.*;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -214,4 +217,37 @@ public class RegistrationService {
             }
             throw new RuntimeException("Cancellation failed", ex);
     }
-}}
+}
+
+    public Page<BookingResponseDTO> getMyBookings(
+            Pageable pageable
+    ){
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        User user = userRepo.findByEmail(authentication.getName())
+                .orElseThrow(()->new RuntimeException("No user"));
+
+        Page<Registration> registrations=registerRepo.findByUserId(user.getId(), pageable);
+
+        return registrations.map(this::mapToDTO);
+    }
+
+    private BookingResponseDTO mapToDTO(
+            Registration registration
+    ) {
+        return BookingResponseDTO.builder()
+                .registrationId(registration.getId())
+                .eventTitle(registration.getEvent().getTitle())
+                .ticketTierName(registration.getTicketTierName())
+                .ticketCount(registration.getTicketCount())
+                .totalAmount(registration.getTotalAmount())
+                .paymentStatus(registration.getPaymentStatus())
+                .status(registration.getStatus())
+                .registrationDate(
+                        registration.getRegistrationDate()
+                )
+                .build();
+    }
+
+}
