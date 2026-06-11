@@ -1,6 +1,7 @@
 package com.MiniProject.eventregistration.controller;
 
 import com.MiniProject.eventregistration.DTOs.BookingResponseDTO;
+import com.MiniProject.eventregistration.DTOs.RegistrationFilterDTO;
 import com.MiniProject.eventregistration.DTOs.RegistrationRequestDTO;
 import com.MiniProject.eventregistration.DTOs.RegistrationResponseDTO;
 import com.MiniProject.eventregistration.entity.Registration;
@@ -37,9 +38,24 @@ public class RegistrationController {
     }
 
     @GetMapping("/my")
-    public ResponseEntity<Page<BookingResponseDTO>> MyBookingHistory(@PageableDefault(size=10,sort="registrationDate",direction= Sort.Direction.DESC)Pageable pageable){
+    public ResponseEntity<Page<BookingResponseDTO>>
+    getMyBookings(
+
+            RegistrationFilterDTO filter,
+
+            @PageableDefault(
+                    size = 10,
+                    sort = "registrationDate",
+                    direction = Sort.Direction.DESC
+            )
+            Pageable pageable
+    ) {
+
         return ResponseEntity.ok(
-                registrationService.getMyBookings(pageable)
+                registrationService.getMyBookings(
+                        filter,
+                        pageable
+                )
         );
     }
 }

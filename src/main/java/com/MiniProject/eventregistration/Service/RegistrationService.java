@@ -1,8 +1,10 @@
 package com.MiniProject.eventregistration.Service;
 
 import com.MiniProject.eventregistration.DTOs.BookingResponseDTO;
+import com.MiniProject.eventregistration.DTOs.RegistrationFilterDTO;
 import com.MiniProject.eventregistration.DTOs.RegistrationRequestDTO;
 import com.MiniProject.eventregistration.DTOs.RegistrationResponseDTO;
+import com.MiniProject.eventregistration.Service.specification.RegistrationSpecification;
 import com.MiniProject.eventregistration.entity.*;
 import com.MiniProject.eventregistration.entity.Enums.PaymentStatus;
 import com.MiniProject.eventregistration.entity.Enums.RegistrationStatus;
@@ -12,6 +14,7 @@ import com.MiniProject.eventregistration.mongo.document.RegistrationAnswers;
 import com.MiniProject.eventregistration.mongo.repository_mongo.EventPageConfigRepository;
 import com.MiniProject.eventregistration.mongo.repository_mongo.RegistrationAnswerRepository;
 import com.MiniProject.eventregistration.repository.*;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -220,6 +223,7 @@ public class RegistrationService {
 }
 
     public Page<BookingResponseDTO> getMyBookings(
+            RegistrationFilterDTO filter,
             Pageable pageable
     ){
         Authentication authentication =
@@ -228,7 +232,33 @@ public class RegistrationService {
         User user = userRepo.findByEmail(authentication.getName())
                 .orElseThrow(()->new RuntimeException("No user"));
 
-        Page<Registration> registrations=registerRepo.findByUserId(user.getId(), pageable);
+        Specification<Registration> spec =
+                RegistrationSpecification.belongsToUser(user.getId())
+                        .and(
+                                RegistrationSpecification.hasPaymentStatus(
+                                        filter.getPaymentStatus()
+                                )
+                        )
+                        .and(
+                                RegistrationSpecification.hasTicketTier(
+                                        filter.getTicketTierName()
+                                )
+                        )
+                        .and(
+                                RegistrationSpecification.registeredAfter(
+                                        filter.getFromDate()
+                                )
+                        )
+                        .and(
+                                RegistrationSpecification.registeredBefore(
+                                        filter.getToDate()
+                                )
+                        );
+        Page<Registration> registrations =
+                registerRepo.findAll(
+                        spec,
+                        pageable
+                );
 
         return registrations.map(this::mapToDTO);
     }
