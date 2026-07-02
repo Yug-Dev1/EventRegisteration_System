@@ -32,4 +32,7 @@ public class Event {
     private Integer availableSeats;
 
     private Boolean allowMultipleTickets = true;
+
+    @Version
+    private Long version;
 }

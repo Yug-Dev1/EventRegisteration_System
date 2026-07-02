@@ -31,9 +31,9 @@ public class RegistrationController {
         return registrationService.registerUser(dto);
     }
 
-    @DeleteMapping("/cancel/{eventId}")
-    public String cancelRegistration(@PathVariable Long eventId) {
-        registrationService.cancelRegistration(eventId);
+    @DeleteMapping("/{registrationId}")
+    public String cancelRegistration(@PathVariable Long registrationId) {
+        registrationService.cancelRegistration(registrationId);
         return "Registration cancelled successfully";
     }
 

@@ -60,10 +60,6 @@ public class RegistrationService {
         Event event = eventRepo.findById(dto.getEventId())
                 .orElseThrow(() -> new ResourceNotFound("Event doesn't exist"));
 
-        if (registerRepo.existsByUserAndEvent(user, event)) {
-            throw new RuntimeException("Already registered");
-        }
-
         EventPageConfig eventPageConfig = eventPageConfigRepository.findByEventId(dto.getEventId())
                 .orElseThrow(() -> new ResourceNotFound("Event config doesn't exist"));
 
@@ -177,22 +173,30 @@ public class RegistrationService {
     }
 
     @Transactional
-    public void cancelRegistration(Long eventID){
+    public void cancelRegistration(Long registrationId){
         String email=SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
 
         User user=userRepo.findByEmail(email).orElseThrow(()->new ResourceNotFound("user doesn't EXIST"));
-        Event event= eventRepo.findById(eventID).orElseThrow(()-> new ResourceNotFound("event doesn't EXIST"));
-        Registration registration = registerRepo.findByUserAndEvent(user, event)
-                .orElseThrow(() -> new ResourceNotFound("Registration not found"));
+
+        Registration registration =
+                registerRepo.findById(registrationId)
+                        .orElseThrow(()-> new RuntimeException("Registration doesn't exist"));
+        if (!registration.getUser().getId().equals(user.getId())) {
+
+            throw new RuntimeException("You cannot cancel another user's registration.");
+
+        }
+        Event event = registration.getEvent();
 
         if(registration.getStatus()==RegistrationStatus.CANCELLED) {
             throw new RuntimeException("Already CANCELLED");
         }
 
         event.setAvailableSeats(event.getAvailableSeats()+registration.getTicketCount());
-        EventPageConfig eventPageConfig=eventPageConfigRepository.findByEventId(eventID).orElseThrow(()-> new ResourceNotFound("Does not exist"));
+
+        EventPageConfig eventPageConfig=eventPageConfigRepository.findByEventId(event.getId()).orElseThrow(()-> new ResourceNotFound("Does not exist"));
 
         EventPageConfig.TicketTier tier=eventPageConfig.getTicketTiers()
                 .stream().filter(t->t.getName().equalsIgnoreCase(registration.getTicketTierName()))
